@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Edu+NSW+ACT+Foundation&family=Roboto&display=swap');
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #DFF2EB;
+  font-family: 'Roboto', sans-serif;
+}
+
+.lobby-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.lobby-heading {
+  font-size: 3rem;
+  font-family: 'Edu NSW ACT Foundation', cursive;
+  color: #4A628A;
+  margin-bottom: 2rem;
+}
+
+.lobby-input-group {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.lobby-input {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 2px solid #7AB2D3;
+  border-radius: 0.5rem;
+}
+
+.lobby-button {
+  background-color: #4A628A;
+  color: white;
+  font-size: 1.25rem;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 1rem;
+  cursor: pointer;
+  font-family: 'Roboto', sans-serif;
+  transition: background-color 0.3s ease;
+}
+
+.lobby-button:hover {
+  background-color: #7AB2D3;
+}

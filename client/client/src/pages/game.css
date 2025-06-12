@@ -1,0 +1,117 @@
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #DFF2EB; /* Word Warp background */
+  font-family: 'Roboto', sans-serif;
+}
+
+.game-container {
+  width: 90%;
+  max-width: 800px;
+  background-color: white;
+  padding: 2rem;
+  border-radius: 2rem; /* 2xl */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  text-align: center;
+}
+.game-container h1,
+.game-container h2,
+.game-container h3 {
+  font-family: 'Edu NSW ACT Hand', cursive;
+  color: #4A628A; /* Primary text color */
+  margin-bottom: 1rem;
+}
+
+.game-container p,
+.game-container span {
+  font-family: 'Roboto', sans-serif;
+  font-size: 1.1rem;
+  color: #333;
+  margin: 0.5rem 0;
+  line-height: 1.6;
+}
+
+/* Prompt & Judge */
+h2 {
+  font-size: 2rem;
+  color: #4A628A;
+  font-weight: 700;
+}
+
+p {
+  font-size: 1.25rem;
+}
+
+/* Input Field */
+.response-input input {
+  font-size: 1.25rem;
+  padding: 1rem 1.5rem;
+  border-radius: 1.5rem;
+  border: 2px solid #B9E5E8;
+  font-family: 'Roboto', sans-serif;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.response-input input:focus {
+  border-color: #7AB2D3;
+}
+
+/* Submit Button */
+.response-input button,
+button {
+  font-size: 1.1rem;
+  padding: 1rem 1.5rem;
+  border-radius: 1.5rem;
+  background-color: #4A628A;
+  color: white;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-family: 'Roboto', sans-serif;
+}
+
+.response-input button:hover,
+button:hover {
+  background-color: #3a5070;
+}
+
+/* Reveal Section */
+ul {
+  padding-left: 1.5rem;
+}
+
+li {
+  font-size: 1.2rem;
+}
+
+/* Winner Highlight */
+.text-green-700 {
+  color: #228B22;
+}
+
+.text-gray-800 {
+  color: #333;
+}
+.winner-banner {
+  background-color: #B9E5E8;
+  color: #4A628A;
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding: 1rem 2rem;
+  border-radius: 2rem;
+  margin-top: 2rem;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  font-family: 'Edu NSW ACT Hand', cursive;
+  display: inline-block;
+}
+
+.winner-name {
+  color: #2F4858;
+  font-family: 'Roboto', sans-serif;
+}
