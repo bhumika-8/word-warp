@@ -33,14 +33,23 @@ useEffect(() => {
   useEffect(() => {
     socket.emit('joinRoom', roomId);
 
-    socket.on('roomJoined', ({ roomId , existingMembers,creator }) => {
-       localStorage.setItem("roomCode", roomId);
-    setPlayers([{ id: socket.id, name: "You" }, ...existingMembers.map(id => ({ id, name: `Player` }))])
+   socket.on("roomJoined", ({ roomId, existingMembers = [], creator }) => {
+  console.log("Successfully joined room:", roomId);
 
-      setCreator(creator);
-      localStorage.setItem("creator", creator); // from roomJoined
+  localStorage.setItem("roomCode", roomId);
+  localStorage.setItem("creator", creator);
+  setCreator(creator);
 
-    });
+  const allMembers = [socket.id, ...existingMembers];
+
+  const numberedPlayers = allMembers.map((id, index) => ({
+    id,
+    name: `Player ${index + 1}`
+  }));
+
+  setPlayers(numberedPlayers);
+});
+
 
    socket.on('roomUpdate', ({ newMember }) => {
   setPlayers((prev) => {

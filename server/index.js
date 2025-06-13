@@ -15,6 +15,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 
 const rooms = {};
+function broadcastOpenRooms() {
+  const openRooms = Object.entries(rooms).map(([roomCode, room]) => ({
+    code: roomCode,
+    members: room.members.size,
+  }));
+  io.emit("roomListUpdate", openRooms);
+  console.log(openRooms);
+}
 
 function getRandomPrompt() {
   const prompts = [
@@ -43,7 +51,10 @@ const io = new Server(server, {
 
 io.on("connection", (socket) => {
   console.log(`New socket connected: ${socket.id}`);
-
+socket.emit("roomListUpdate", Object.entries(rooms).map(([code, room]) => ({
+  code,
+  members: room.members.size,
+})));
   socket.on("createRoom", () => {
     const roomId = uuidv4().slice(0, 6);
     rooms[roomId] = {
@@ -55,32 +66,61 @@ io.on("connection", (socket) => {
     };
     socket.join(roomId);
     socket.emit("roomCreated", roomId);
+    broadcastOpenRooms();
     console.log(`Room created: ${roomId} by ${socket.id}`);
   });
+socket.on("getRoomList", () => {
+  const openRooms = Object.entries(rooms).map(([code, room]) => ({
+    code,
+    members: room.members.size,
+  }));
+  socket.emit("roomListUpdate", openRooms);
+});
 
   socket.on("joinRoom", (roomId) => {
-    const room = rooms[roomId];
-    if (room) {
-      room.members.add(socket.id);
-      socket.join(roomId);
+  const room = rooms[roomId];
 
-      const existingMembers = Array.from(room.members).filter(id => id !== socket.id);
+  if (!room) {
+    socket.emit("error", "Room does not exist");
+    return;
+  }
 
-      socket.emit("roomJoined", {
-        roomId,
-        existingMembers,
-        creator: room.creator,
-      });
+  if (room.members.has(socket.id)) {
+    // Already in the room — maybe page refresh or rejoin
+    const existingMembers = Array.from(room.members).filter(id => id !== socket.id);
+    socket.emit("roomJoined", {
+      roomId,
+      existingMembers,
+      creator: room.creator,
+    });
+    return;
+  }
 
-      socket.to(roomId).emit("roomUpdate", {
-        newMember: socket.id,
-      });
+  if (room.members.size >= 6) {
+    socket.emit("error", "Room is full.");
+    return;
+  }
 
-      console.log(`👥 ${socket.id} joined room: ${roomId}`);
-    } else {
-      socket.emit("error", "Room does not exist");
-    }
+  // Add the member
+  room.members.add(socket.id);
+  socket.join(roomId);
+
+  const existingMembers = Array.from(room.members).filter(id => id !== socket.id);
+
+  socket.emit("roomJoined", {
+    roomId,
+  members: Array.from(room.members),
+  creator: room.creator,
   });
+
+  socket.to(roomId).emit("roomUpdate", {
+    newMember: socket.id,
+  });
+
+  broadcastOpenRooms();
+  console.log(`👥 ${socket.id} joined room: ${roomId}`);
+});
+
 
   socket.on("submit-response", ({ room, response, user }) => {
     const currentRoom = rooms[room];
@@ -131,6 +171,7 @@ io.on("connection", (socket) => {
         console.log(`👑 Creator ${user} left. New creator/judge: ${newCreator}`);
       }
       socket.to(room).emit("roomUpdate", { memberLeft: user });
+      broadcastOpenRooms();
       console.log(`👋 ${user} left room ${room}`);
     }
   });
@@ -158,6 +199,7 @@ io.on("connection", (socket) => {
         newCreator,
         newJudge: newCreator,
       });
+      
 
       console.log(`👑 Creator ${socket.id} disconnected. New creator/judge: ${newCreator}`);
 
@@ -176,6 +218,7 @@ io.on("connection", (socket) => {
 
     io.to(roomCode).emit("roomUpdate", { memberLeft: socket.id });
   }
+  broadcastOpenRooms();
 });
 
   socket.on("startGame", ({ roomCode }) => {
@@ -192,8 +235,9 @@ io.on("connection", (socket) => {
 
       io.to(roomCode).emit("gameStarted", {
         prompt,
-        selectedUser
+        selectedUser,
       });
+      
 
       console.log(`Game started in room ${roomCode} with judge ${selectedUser}`);
     }

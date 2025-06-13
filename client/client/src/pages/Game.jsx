@@ -16,6 +16,14 @@ const Game = () => {
   const [finalReveal, setFinalReveal] = useState([]);
   const [winnerId, setWinnerId] = useState(null);
 const creator = localStorage.getItem("creator");
+//const playerNames = JSON.parse(localStorage.getItem("playerNames") || "{}");
+
+// const getDisplayName = (id) => {
+//   if (id === socket.id) return "You";
+//   return playerNames[id] || "Unknown Player";
+// };
+const playerNames = JSON.parse(localStorage.getItem("playerNames") || "{}");
+const currentUserName = playerNames[socket.id] || "You";
 
   const isJudge = currentUser === judge;
 
@@ -65,6 +73,7 @@ const creator = localStorage.getItem("creator");
       setWinnerId(winner);
     });
 
+
     socket.on("gameStarted", ({ prompt: newPrompt, selectedUser }) => {
       localStorage.setItem("prompt", newPrompt);
       localStorage.setItem("judge", selectedUser);
@@ -101,6 +110,22 @@ const creator = localStorage.getItem("creator");
     
   };
 }, []);
+//import { useEffect } from "react";
+
+useEffect(() => {
+  const storedNames = localStorage.getItem("playerNames");
+  if (storedNames) {
+    try {
+      const playerNames = JSON.parse(storedNames);
+      console.log("Player Names:", playerNames);
+    } catch (error) {
+      console.error("Failed to parse playerNames:", error);
+    }
+  } else {
+    console.log("No playerNames found in localStorage");
+  }
+}, []);
+
 
 
   return (
