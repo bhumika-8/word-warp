@@ -1,117 +1,200 @@
-body {
-  margin: 0;
-  padding: 0;
-  height: 100vh;
+/* Full screen layout */
+.game-container {
+  min-height: 100vh;
+  background-color: #070F2B;
+  background-image: url("../../public/pattern.svg");
+  background-size: 200px;
+  background-repeat: repeat;
+  color: #9290C3;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+  letter-spacing: 0.5px;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #DFF2EB; /* Word Warp background */
-  font-family: 'Roboto', sans-serif;
+  position: relative;
+  padding: 2rem;
 }
 
-.game-container {
+/* Main glass box */
+.glass-box {
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 2rem;
+  padding: 3rem;
+  max-width: 900px;
   width: 90%;
-  max-width: 800px;
-  background-color: white;
-  padding: 2rem;
-  border-radius: 2rem; /* 2xl */
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+}
+
+/* Exit button on top-right */
+.exit-button {
+  position: absolute;
+  top: 1.5rem;
+  right: 2rem;
+  background-color: #ff4b5c;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 1rem;
+  cursor: pointer;
+  font-size: 1rem;
+  letter-spacing: 1px;
+  font-weight: 400;
+  transition: background-color 0.3s ease;
+}
+
+.exit-button:hover {
+  background-color: #ff2e44;
+}
+
+/* Headings and Prompt */
+.judge-name {
+  font-size: 2rem;
+  font-weight: 400;
+  letter-spacing: 1px;
+  color: #C5C4E3;
+  margin-bottom: 1rem;
   text-align: center;
 }
-.game-container h1,
-.game-container h2,
-.game-container h3 {
-  font-family: 'Edu NSW ACT Hand', cursive;
-  color: #4A628A; /* Primary text color */
-  margin-bottom: 1rem;
+
+.prompt-text {
+  font-size: 1.5rem;
+  color: #E0E0FF;
+  text-align: center;
+  margin-bottom: 2rem;
 }
 
-.game-container p,
-.game-container span {
-  font-family: 'Roboto', sans-serif;
-  font-size: 1.1rem;
-  color: #333;
-  margin: 0.5rem 0;
-  line-height: 1.6;
+/* Input + Submit */
+.response-input {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
 
-/* Prompt & Judge */
-h2 {
-  font-size: 2rem;
-  color: #4A628A;
-  font-weight: 700;
-}
-
-p {
-  font-size: 1.25rem;
-}
-
-/* Input Field */
 .response-input input {
-  font-size: 1.25rem;
-  padding: 1rem 1.5rem;
-  border-radius: 1.5rem;
-  border: 2px solid #B9E5E8;
-  font-family: 'Roboto', sans-serif;
-  outline: none;
-  transition: border-color 0.3s ease;
-}
-
-.response-input input:focus {
-  border-color: #7AB2D3;
-}
-
-/* Submit Button */
-.response-input button,
-button {
-  font-size: 1.1rem;
-  padding: 1rem 1.5rem;
-  border-radius: 1.5rem;
-  background-color: #4A628A;
-  color: white;
-  font-weight: bold;
+  padding: 1rem;
   border: none;
+  border-radius: 1rem;
+  background-color: #1B1A55;
+  color: #ffffff;
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+  width: 24rem;
+}
+
+.response-input input::placeholder {
+  color: #aaa;
+  font-style: italic;
+}
+
+.response-input .custom-button {
+  background-color: #535C91;
+  color: white;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 1rem;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  font-family: 'Roboto', sans-serif;
 }
 
-.response-input button:hover,
-button:hover {
-  background-color: #3a5070;
+.response-input .custom-button:hover {
+  background-color: #9290C3;
 }
 
-/* Reveal Section */
-ul {
-  padding-left: 1.5rem;
+/* Judge Response Buttons */
+.response-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  margin-top: 1.5rem;
 }
 
-li {
+.custom-button {
+  background-color: #1B1A55;
+  color: #C5C4E3;
+  padding: 1.2rem;
+  border: 2px solid #535C91;
+  border-radius: 1rem;
   font-size: 1.2rem;
+  letter-spacing: 0.7px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-/* Winner Highlight */
-.text-green-700 {
-  color: #228B22;
+.custom-button:hover {
+  background-color: #2B2A65;
+  border-color: #9290C3;
 }
 
-.text-gray-800 {
-  color: #333;
+/* Highlight selected */
+.bg-green-100 {
+  background-color: #283618 !important;
+  color: #d2fba4 !important;
 }
+
+.border-green-500 {
+  border-color: #80FF95 !important;
+}
+
+/* Winner banner */
 .winner-banner {
-  background-color: #B9E5E8;
-  color: #4A628A;
+  text-align: center;
+  color: #80FF95;
   font-size: 1.5rem;
-  font-weight: bold;
-  padding: 1rem 2rem;
-  border-radius: 2rem;
+  font-weight: 400;
+  letter-spacing: 1px;
   margin-top: 2rem;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-  font-family: 'Edu NSW ACT Hand', cursive;
-  display: inline-block;
 }
 
-.winner-name {
-  color: #2F4858;
-  font-family: 'Roboto', sans-serif;
+/* Final reveal list */
+ul.list-disc {
+  font-size: 1.2rem;
+  color: #eee;
+  margin-bottom: 2rem;
+}
+
+ul.list-disc li {
+  margin-bottom: 0.8rem;
+}
+.response-item {
+  font-size: 1.3rem;
+  color: #DFF2EB;
+  background-color: #1B1A55;
+  padding: 1rem;
+  margin: 0.75rem 0;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  letter-spacing: 0.5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.2s ease-in-out;
+}
+
+.response-item:hover {
+  transform: scale(1.03);
+}
+
+.winner-response {
+  background-color: #2e7d32; /* dark green */
+  color: #d2fba4;
+  font-weight: 600;
+  border: 2px solid #80FF95;
+}
+
+.normal-response {
+  background-color: #1B1A55;
+}
+
+.player-name {
+  font-weight: 500;
+  font-family: 'Lora', serif;
+  font-size: 1.1rem;
+  color: #A0C3D9;
+  margin-left: 1rem;
 }

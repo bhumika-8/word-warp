@@ -23,7 +23,7 @@ useEffect(() => {
     // Store this data in local storage or context/state as needed
     localStorage.setItem("prompt", prompt);
     localStorage.setItem("judge", selectedUser);
-    console.log(selectedUser.username)
+    //console.log(selectedUser.username)
     navigate("/game"); // Use react-router navigate
   });
 
@@ -33,23 +33,15 @@ useEffect(() => {
   useEffect(() => {
     socket.emit('joinRoom', roomId);
 
-   socket.on("roomJoined", ({ roomId, existingMembers = [], creator }) => {
-  console.log("Successfully joined room:", roomId);
+    socket.on('roomJoined', ({ roomId , existingMembers,creator ,playerNames}) => {
+       localStorage.setItem("roomCode", roomId);
+        console.log("🟢 playerNames from backend:", playerNames);
+    setPlayers([{ id: socket.id, name: "You" }, ...existingMembers.map(id => ({ id, name: `Player` }))])
+ localStorage.setItem("playerNames", JSON.stringify(playerNames)); 
+      setCreator(creator);
+      localStorage.setItem("creator", creator); // from roomJoined
 
-  localStorage.setItem("roomCode", roomId);
-  localStorage.setItem("creator", creator);
-  setCreator(creator);
-
-  const allMembers = [socket.id, ...existingMembers];
-
-  const numberedPlayers = allMembers.map((id, index) => ({
-    id,
-    name: `Player ${index + 1}`
-  }));
-
-  setPlayers(numberedPlayers);
-});
-
+    });
 
    socket.on('roomUpdate', ({ newMember }) => {
   setPlayers((prev) => {
@@ -70,16 +62,25 @@ useEffect(() => {
 useEffect(() => {
   console.log("Updated players:", players);
 }, [players]);
+useEffect(() => {
+  socket.on("playerListUpdate", (updatedList) => {
+    setPlayers(updatedList); // or whatever your state setter is
+  });
+
+  return () => {
+    socket.off("playerListUpdate");
+  };
+}, []);
 
   return (
     <div className="room-container">
       <h2 className="room-heading">Room Code: {roomId}</h2>
       <h3 className="room-subheading">Players in Room</h3>
       <div >
-        <PlayerList players={players}  />
+        <PlayerList players={players} />
       </div>
       {socket.id === creator && (
-  <button className="lobby-button" onClick={handleStartGame}>
+  <button className="start-button" onClick={handleStartGame}>
     Start Game
   </button>
 )}

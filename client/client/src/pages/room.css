@@ -1,44 +1,63 @@
-/* room.css */
-@import url('https://fonts.googleapis.com/css2?family=Edu+NSW+ACT+Foundation&family=Roboto&display=swap');
-
 .room-container {
-  background-color: #DFF2EB;
-  min-height: 100vh;
-  padding: 2rem;
-  font-family: 'Edu NSW ACT Foundation', 'Roboto', sans-serif;
-  text-align: center;
-}
-
-.room-heading {
-  font-size: 2rem;
-  color: #4A628A;
-  margin-bottom: 1rem;
-}
-
-.room-subheading {
-  font-size: 1.5rem;
-  color: #7AB2D3;
-  margin-bottom: 2rem;
-}
-
-.player-grid {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 1rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* Push content to top */
+  padding: 2rem;
+  width: 100vw;              /* Take full viewport width */
+  min-height: 100vh;         /* Full screen height */
+  box-sizing: border-box;    /* Ensure padding doesn’t overflow */
+  
+  background-color: #070F2B;
+  background-image: url("../../public/pattern.svg");
+  background-size: 500px;
+  background-repeat: repeat;
+
+  color: #9290C3;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 300;
+  letter-spacing: 0.5px;
 }
 
-.player-card {
-  background-color: #B9E5E8;
-  color: #4A628A;
+
+/* Room Code Header */
+.room-heading {
+  font-family: 'Lora', serif;
+  font-size: 2.5rem;
+  background-color: #1B1A55;
   padding: 1rem 2rem;
-  border-radius: 2rem;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  font-size: 1.2rem;
-  font-weight: bold;
-  transition: transform 0.2s;
+  border-radius: 1rem;
+  color: #FFE3A9;
+  letter-spacing: 2px;
+  font-weight: 400;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  word-break: break-word;
 }
 
-.player-card:hover {
+/* Players Header */
+.room-subheading {
+  font-size: 1.6rem;
+  font-weight: 300;
+  letter-spacing: 1px;
+  margin-bottom: 2rem;
+  color: #9290C3;
+}
+
+/* Start Game Button */
+.start-button {
+  padding: 1rem 2rem;
+  font-size: 1.5rem;
+  letter-spacing: 3px;
+  margin-bottom: 2rem;
+  background-color: #535C91;
+  border: none;
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.start-button:hover {
+  background-color: #9290C3;
   transform: scale(1.05);
 }

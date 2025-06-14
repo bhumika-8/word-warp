@@ -9,37 +9,39 @@ const Lobby = () => {
   const navigate = useNavigate();
 
   const handleCreateRoom = () => {
-    console.log("Creating room...");
+    //console.log("Creating room...");
     socket.emit("createRoom");
   };
 
   const handleJoinRoom = () => {
     if (!roomCode.trim()) return;
-    console.log("Joining room:", roomCode);
+    //console.log("Joining room:", roomCode);
     socket.emit("joinRoom", roomCode);
   };
 
   useEffect(() => {
     socket.on("connect", () => {
-      console.log("✅ Socket connected:", socket.id);
+      //console.log("✅ Socket connected:", socket.id);
     });
-
+socket.on("join-error", (message) => {
+  alert("Game Started");
+});
     socket.on("roomCreated", (roomId) => {
-      console.log("Room created with ID:", roomId);
+      //console.log("Room created with ID:", roomId);
       navigate(`/room/${roomId}`);
     });
 
  socket.on("roomJoined", (data) => {
   if (!data?.roomId) {
-    console.error("roomJoined event received without valid roomId:", data);
+    //console.error("roomJoined event received without valid roomId:", data);
     return;
   }
-  console.log("Successfully joined room:", data.roomId);
+  //console.log("Successfully joined room:", data.roomId);
   navigate(`/room/${data.roomId}`);
 });
 
     socket.on("roomListUpdate", (rooms) => {
-      console.log("🟢 Received room list:", rooms);
+      //console.log("🟢 Received room list:", rooms);
       setOpenRooms(rooms);
     });
 
@@ -53,6 +55,7 @@ const Lobby = () => {
       socket.off("roomJoined");
       socket.off("roomListUpdate");
       socket.off("error");
+      socket.off("join-error");
     };
   }, [navigate]);
 useEffect(() => {
@@ -61,7 +64,7 @@ useEffect(() => {
 
   return (
     <div className="lobby-container">
-      <h1 className="lobby-heading">Lobby</h1>
+      <h1 className="lobby-heading">Word Warp</h1>
 
       <button className="lobby-button" onClick={handleCreateRoom}>
         Create Room
@@ -95,6 +98,7 @@ useEffect(() => {
                 <button
                   className="join-room-btn"
                  onClick={() => {
+                  
   console.log("Joining directly:", room.code);
   socket.emit("joinRoom", room.code);
 }}

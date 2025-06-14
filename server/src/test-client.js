@@ -1,31 +1,10 @@
-// server/test-socket.mjs
-import { io } from "socket.io-client";
+const path = './src/data/cah-compact.json';
 
-const socket = io("http://localhost:5000");
-
-socket.on("connect", () => {
-  console.log("✅ Connected to server:", socket.id);
-
-  // Test createRoom
-  socket.emit("createRoom", "room123");
-
-  socket.on("roomCreated", (roomId) => {
-    console.log("🟢 Room created:", roomId);
-  });
-
-  socket.on("roomJoined", (roomId) => {
-    console.log("🟢 Joined room:", roomId);
-  });
-
-  socket.on("userJoined", (userId) => {
-    console.log("👥 Another user joined:", userId);
-  });
-
-  socket.on("error", (msg) => {
-    console.error("❌ Error:", msg);
-  });
-});
-
-socket.on("disconnect", () => {
-  console.log("🔴 Disconnected from server");
-});
+try {
+  const raw = fs.readFileSync(path, 'utf-8');
+  console.log('Raw data length:', raw.length);
+  const json = JSON.parse(raw);
+  console.log('Loaded JSON keys:', Object.keys(json));
+} catch (e) {
+  console.error('Failed to load JSON:', e.message);
+}

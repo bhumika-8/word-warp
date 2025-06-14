@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import socket from "../socket";
 import './game.css';
+import { useNavigate } from "react-router-dom";
 
 const Game = () => {
   const room = localStorage.getItem("roomCode");
   const currentUser = socket.id;
+  const navigate = useNavigate();
 
   const [prompt, setPrompt] = useState(localStorage.getItem("prompt") || "");
   const [judge, setJudge] = useState(localStorage.getItem("judge") || "");
@@ -15,45 +17,36 @@ const Game = () => {
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [finalReveal, setFinalReveal] = useState([]);
   const [winnerId, setWinnerId] = useState(null);
-const creator = localStorage.getItem("creator");
-//const playerNames = JSON.parse(localStorage.getItem("playerNames") || "{}");
+  const creator = localStorage.getItem("creator");
 
-// const getDisplayName = (id) => {
-//   if (id === socket.id) return "You";
-//   return playerNames[id] || "Unknown Player";
-// };
-const playerNames = JSON.parse(localStorage.getItem("playerNames") || "{}");
-const currentUserName = playerNames[socket.id] || "You";
+  const playerNames = JSON.parse(localStorage.getItem("playerNames") || "{}");
+  const getPlayerName = (id) => playerNames[id] || id;
 
   const isJudge = currentUser === judge;
 
   const handleSubmit = () => {
     if (hasSubmitted || response.trim() === "") return;
-
     socket.emit("submit-response", {
       user: currentUser,
       response: response.trim(),
       room,
     });
-
     setHasSubmitted(true);
     setResponse("");
   };
 
   const handleJudgeSubmit = (index) => {
     if (index === null || !allResponses[index]) return;
-
     socket.emit("judge-select", {
       room,
       winner: allResponses[index].user,
       responses: allResponses,
     });
-
     setSelectedIndex(index);
   };
 
   const handleNextRound = () => {
-    socket.emit("startGame", { roomCode: room });
+    socket.emit("startNextRound", { room });
   };
 
   const handleExit = () => {
@@ -67,13 +60,10 @@ const currentUserName = playerNames[socket.id] || "You";
       setExpectedResponses(totalNonJudges);
       setAllResponses(responses);
     });
-
     socket.on("reveal-answers", ({ responses, winner }) => {
       setFinalReveal(responses);
       setWinnerId(winner);
     });
-
-
     socket.on("gameStarted", ({ prompt: newPrompt, selectedUser }) => {
       localStorage.setItem("prompt", newPrompt);
       localStorage.setItem("judge", selectedUser);
@@ -87,66 +77,80 @@ const currentUserName = playerNames[socket.id] || "You";
       setFinalReveal([]);
       setWinnerId(null);
     });
-
     return () => {
       socket.off("all-responses");
       socket.off("reveal-answers");
       socket.off("gameStarted");
     };
   }, []);
+
   useEffect(() => {
-  socket.on("newCreator", ({ newCreator, newJudge }) => {
-    localStorage.setItem("creator", newCreator);
-    localStorage.setItem("judge", newJudge);
-    setJudge(newJudge);
-    if (newCreator === socket.id) {
-  alert("You are now the room creator and the judge.");
-}
- // assuming you have this in state
+    socket.on("newCreator", ({ newCreator, newJudge }) => {
+      localStorage.setItem("creator", newCreator);
+      localStorage.setItem("judge", newJudge);
+      setJudge(newJudge);
+      if (newCreator === socket.id) {
+        alert("You are now the room creator and the judge.");
+      }
+    });
+    return () => {
+      socket.off("newCreator");
+    };
+  }, []);
+
+  useEffect(() => {
+    const storedNames = localStorage.getItem("playerNames");
+    if (storedNames) {
+      try {
+        const playerNames = JSON.parse(storedNames);
+        console.log("Player Names:", playerNames);
+      } catch (error) {
+        console.error("Failed to parse playerNames:", error);
+      }
+    } else {
+      console.log("No playerNames found in localStorage");
+    }
+  }, []);
+
+  useEffect(() => {
+    socket.on("notEnoughPlayers", () => {
+      alert("Game ended — not enough players left.");
+      navigate(`/room/${localStorage.getItem("roomCode")}`);
+    });
+    return () => {
+      socket.off("notEnoughPlayers");
+    };
+  }, []);
+useEffect(() => {
+  socket.on("nextRoundReady", ({ nextJudge }) => {
+    setJudge(nextJudge);
+    localStorage.setItem("judge", nextJudge);
+
+    if (nextJudge === socket.id) {
+      alert("You're the new judge!");
+    }
   });
 
   return () => {
-    socket.off("newCreator");
-    
+    socket.off("nextRoundReady");
   };
 }, []);
-//import { useEffect } from "react";
 
-useEffect(() => {
-  const storedNames = localStorage.getItem("playerNames");
-  if (storedNames) {
-    try {
-      const playerNames = JSON.parse(storedNames);
-      console.log("Player Names:", playerNames);
-    } catch (error) {
-      console.error("Failed to parse playerNames:", error);
-    }
-  } else {
-    console.log("No playerNames found in localStorage");
-  }
-}, []);
+return (
+  <div className="game-container">
+    <button onClick={handleExit} className="exit-button">Exit Room</button>
 
-
-
-  return (
-    <div className="game-container p-4">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold text-[#4A628A]">The Judge: {judge}</h2>
-        <button onClick={handleExit} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
-          Exit Room
-        </button>
-      </div>
-
-      <p className="text-xl mb-6">{prompt}</p>
+    <div className="glass-box">
+      <h2 className="judge-name">The Judge: {playerNames[judge]}</h2>
+      <p className="prompt-text">{prompt}</p>
 
       {!isJudge && !hasSubmitted && (
-        <div className="response-input flex gap-2">
+        <div className="response-input">
           <input
             type="text"
             placeholder="Type your response..."
             value={response}
             onChange={(e) => setResponse(e.target.value)}
-            className="custom-input"
           />
           <button onClick={handleSubmit} className="custom-button">
             Submit
@@ -155,65 +159,64 @@ useEffect(() => {
       )}
 
       {!isJudge && hasSubmitted && (
-        <p className="mt-4 text-green-600 font-medium text-lg">
-          Response submitted. Waiting for others...
-        </p>
+        <p className="waiting-message">Response submitted. Waiting for others...</p>
       )}
 
       {isJudge && allResponses.length === expectedResponses && !finalReveal.length && (
-        <div className="mt-8">
-          <h3 className="text-lg font-semibold mb-2">Select the best response:</h3>
-          <div className="flex flex-col gap-2">
-            {allResponses.map((r, index) => (
-  <button
-    key={index}
-    onClick={() => handleJudgeSubmit(index)}
-    className={`custom-button text-left ${
-      selectedIndex === index ? "bg-green-100 border-green-500 border-2" : ""
-    }`}
-  >
-    {r.response}
-  </button>
-            ))}
-          </div>
+        <div className="response-options">
+          <h3 className="select-title">Select the best response:</h3>
+          {allResponses.map((r, index) => (
+            <button
+              key={index}
+              onClick={() => handleJudgeSubmit(index)}
+              className={`custom-button ${
+                selectedIndex === index ? "bg-green-100 border-green-500" : ""
+              }`}
+            >
+              {r.response}
+            </button>
+          ))}
         </div>
       )}
 
       {finalReveal.length > 0 && (
         <>
-          <div className="mt-8">
-            <h3 className="text-lg font-semibold mb-2">Responses Revealed:</h3>
-            <ul className="list-disc ml-6">
+          <div className="reveal-section">
+            <h3 className="reveal-title">Responses Revealed:</h3>
+            <ul className="list-disc">
               {finalReveal.map((r, index) => (
                 <li
                   key={index}
-                  className={`mb-1 ${
-                    r.user === winnerId ? "font-bold text-green-700" : "text-gray-800"
+                  className={`response-item ${
+                    r.user === winnerId ? "winner-response" : "normal-response"
                   }`}
                 >
-                  {r.response} — <span className="text-xs italic">{r.user}</span>
+                  {r.response} — <span className="player-name">{getPlayerName(r.user)}</span>
                 </li>
               ))}
             </ul>
           </div>
 
-          <div className="winner-banner mt-6 text-xl font-semibold">
-            🎉 {winnerId === currentUser ? "You" : winnerId} win{winnerId === currentUser ? "" : "s"} this round!
+          <div className="winner-banner">
+            🎉 {winnerId === currentUser ? "You" : getPlayerName(winnerId) || "Unknown"} win
+            {winnerId === currentUser ? "" : "s"} this round!
           </div>
 
           {currentUser === creator && (
-  <button
-    onClick={handleNextRound}
-    className="custom-button mt-4 bg-[#4A628A] text-white hover:bg-[#3a4f6a]"
-  >
-    🔄 Next Round
-  </button>
-)}
-
+            <button
+              onClick={handleNextRound}
+              className="custom-button"
+              style={{ marginTop: "2rem" }}
+            >
+              🔄 Next Round
+            </button>
+          )}
         </>
       )}
     </div>
-  );
+  </div>
+);
+
 };
 
 export default Game;
