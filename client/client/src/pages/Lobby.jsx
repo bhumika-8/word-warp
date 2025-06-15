@@ -3,47 +3,45 @@ import { useNavigate } from "react-router-dom";
 import socket from "../socket";
 import './lobby.css';
 import useDisableBackButton from "./disable";
-const Lobby = () => {
- 
 
+const Lobby = () => {
   const [roomCode, setRoomCode] = useState("");
   const [openRooms, setOpenRooms] = useState([]);
   const navigate = useNavigate();
- useDisableBackButton();
+
+  useDisableBackButton();
+
+  const handleExit = () => {
+    localStorage.clear();
+    navigate('/');
+  };
+
   const handleCreateRoom = () => {
-    //console.log("Creating room...");
     socket.emit("createRoom");
   };
 
   const handleJoinRoom = () => {
     if (!roomCode.trim()) return;
-    //console.log("Joining room:", roomCode);
     socket.emit("joinRoom", roomCode);
   };
 
   useEffect(() => {
-    socket.on("connect", () => {
-      //console.log("✅ Socket connected:", socket.id);
+    socket.on("connect", () => {});
+
+    socket.on("join-error", () => {
+      alert("Game Started");
     });
-socket.on("join-error", (message) => {
-  alert("Game Started");
-});
+
     socket.on("roomCreated", (roomId) => {
-      //console.log("Room created with ID:", roomId);
       navigate(`/room/${roomId}`);
     });
 
- socket.on("roomJoined", (data) => {
-  if (!data?.roomId) {
-    //console.error("roomJoined event received without valid roomId:", data);
-    return;
-  }
-  //console.log("Successfully joined room:", data.roomId);
-  navigate(`/room/${data.roomId}`);
-});
+    socket.on("roomJoined", (data) => {
+      if (!data?.roomId) return;
+      navigate(`/room/${data.roomId}`);
+    });
 
     socket.on("roomListUpdate", (rooms) => {
-      //console.log("🟢 Received room list:", rooms);
       setOpenRooms(rooms);
     });
 
@@ -60,9 +58,10 @@ socket.on("join-error", (message) => {
       socket.off("join-error");
     };
   }, [navigate]);
-useEffect(() => {
-  socket.emit("getRoomList");
-}, []);
+
+  useEffect(() => {
+    socket.emit("getRoomList");
+  }, []);
 
   return (
     <div className="lobby-container">
@@ -90,7 +89,7 @@ useEffect(() => {
         {openRooms.length === 0 ? (
           <p>No open rooms right now.</p>
         ) : (
-          <ul >
+          <ul>
             {openRooms.map((room) => (
               <li key={room.code} className="room-card">
                 <div>
@@ -99,12 +98,7 @@ useEffect(() => {
                 </div>
                 <button
                   className="join-room-btn"
-                 onClick={() => {
-                  
-            console.log("Joining directly:", room.code);
-            socket.emit("joinRoom", room.code);
-}}
-
+                  onClick={() => socket.emit("joinRoom", room.code)}
                   disabled={room.members >= 6}
                 >
                   {room.members >= 6 ? "Full" : "Join"}
@@ -114,6 +108,10 @@ useEffect(() => {
           </ul>
         )}
       </div>
+
+      <button className="lobby-exit-button" onClick={handleExit}>
+        Exit
+      </button>
     </div>
   );
 };

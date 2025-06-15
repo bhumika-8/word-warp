@@ -1,0 +1,139 @@
+/* Landing Page Container */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
+.landing-page {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  font-family: 'Orbitron', sans-serif; /* Use futuristic font */
+}
+
+/* Background Video */
+.video-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+  filter: brightness(0.25) saturate(1.2);
+}
+
+/* Centered Content */
+.landing-content {
+  text-align: center;
+  color: #fff;
+  max-width: 800px;
+  animation: fadeInUp 1.5s ease-out forwards;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+/* Title */
+.title {
+  font-size: 4.5rem;
+  font-weight: 900;
+  letter-spacing: 6px;
+  color: #00ffe5;
+  text-shadow: 0 0 10px #00ffe5, 0 0 30px #1bfff2;
+  animation: fadeInTitle 2s ease forwards;
+}
+
+/* Subtitle (Quote) */
+.subtitle {
+  font-size: 1.8rem;
+  margin-top: 1.5rem;
+  color: #b4f5ff;
+  font-style: italic;
+  letter-spacing: 2px;
+  text-shadow: 0 0 5px #00d1ff;
+  animation: fadeInUp 2.2s ease-out forwards;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+/* Rules Box */
+.rules-box {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 2rem;
+  margin-top: 2.5rem;
+  border-radius: 1rem;
+  backdrop-filter: blur(15px);
+  font-size: 1.1rem;
+  line-height: 1.8;
+  box-shadow: 0 0 25px rgba(0, 255, 255, 0.2);
+  color: #e2e2e2;
+  animation: fadeInUp 2.4s ease-out forwards;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+/* Button */
+.enter-btn {
+  margin-top: 2.5rem;
+  padding: 1rem 3rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+  background: #00ffe5;
+  color: #000;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px #00ffe5, 0 0 30px #00ffe5;
+  animation: fadeInUp 2.6s ease-out forwards;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.enter-btn:hover {
+  background: #00ccbe;
+  box-shadow: 0 0 15px #00fff2, 0 0 40px #00ffe5, 0 0 60px #00ffe5;
+  transform: scale(1.05);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInTitle {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Responsive Tweak */
+@media (max-width: 480px) {
+  .title {
+    font-size: 2.8rem;
+  }
+
+  .subtitle {
+    font-size: 1.2rem;
+  }
+
+  .rules-box {
+    font-size: 0.95rem;
+    padding: 1.2rem;
+  }
+
+  .enter-btn {
+    font-size: 1.1rem;
+    padding: 0.75rem 2rem;
+  }
+}

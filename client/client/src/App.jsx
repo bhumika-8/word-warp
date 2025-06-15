@@ -1,42 +1,40 @@
 // src/App.jsx
 import React ,{useEffect} from 'react';
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
 import Lobby from "./pages/Lobby";
 import Room from "./pages/Room";
 import Game from "./pages/Game";
-import socket from "./socket";
-import BlobbyBackground from './components/BlobbyBackground';
-function App() {
-  console.log("Lobby:", Lobby); // Should log a function, not an object
-console.log("Room:", Room);   // Same here
-useEffect(() => {
-  const handleBeforeUnload = () => {
-    const roomCode = localStorage.getItem("roomCode");
-    if (roomCode) {
-      socket.emit("leave-room", {
-        room: roomCode,
-        user: socket.id,
-      });
-    }
-  };
 
-  window.addEventListener("beforeunload", handleBeforeUnload);
-  return () => window.removeEventListener("beforeunload", handleBeforeUnload);
-}, []);
+import BlobbyBackground from './components/BlobbyBackground';
+import LandingPage from './pages/Landingpage';
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+ // adjust as per your imports
+
+
+const AppWrapper = () => {
+  const location = useLocation();
 
   return (
-      <div className="relative w-full h-screen overflow-hidden bg-black">
-      <BlobbyBackground />
-    <Router>
+    <div className="relative w-full h-screen overflow-hidden bg-black">
+      {/* Only show blobs if not on the landing page */}
+      {location.pathname !== "/" && <BlobbyBackground />}
+
       <Routes>
-        <Route path="/" element={<Lobby />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/lobby" element={<Lobby />} />
         <Route path="/room/:roomId" element={<Room />} />
         <Route path="/game" element={<Game />} />
-
       </Routes>
-    </Router>
     </div>
   );
-}
+};
+
+// Wrap with Router outside
+const App = () => (
+  <Router>
+    <AppWrapper />
+  </Router>
+);
 
 export default App;
+

@@ -221,3 +221,103 @@ ul.list-disc li {
 .flicker {
   animation: flicker 1.8s infinite;
 }
+@media (max-width: 600px) {
+  .game-container {
+    padding: 1.5rem;
+  }
+
+  .glass-box {
+    padding: 2rem;
+    border-radius: 1.5rem;
+  }
+
+  .exit-button {
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    top: 1rem;
+    right: 1rem;
+    z-index: 10;
+  }
+
+  .judge-name {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .prompt-text {
+    font-size: 1.4rem;
+    margin-bottom: 1.8rem;
+  }
+
+  .response-input {
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .response-input input {
+    font-size: 1rem;
+    padding: 1rem;
+    width: 20rem;
+  }
+
+  .response-input .custom-button {
+    font-size: 1rem;
+    padding: 0.8rem 1.5rem;
+  }
+
+  .response-options {
+    gap: 1rem;
+  }
+
+  .custom-button {
+    font-size: 1rem;
+    padding: 1rem;
+  }
+
+  .response-item {
+    font-size: 1.1rem;
+    padding: 1rem;
+  }
+
+  .player-name {
+    font-size: 1rem;
+  }
+
+  .identity-label {
+    font-size: 1.1rem;
+    margin-top: 1rem;
+  }
+
+  .identity-name {
+    font-size: 1.1rem;
+  }
+
+  .winner-banner {
+    font-size: 1.3rem;
+    margin-top: 1.5rem;
+  }
+
+  ul.list-disc {
+    font-size: 1rem;
+    padding-left: 1.2rem;
+  }
+
+  ul.list-disc li {
+    margin-bottom: 0.8rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .response-input input {
+    width: 100%;
+  }
+
+  .exit-button {
+    font-size: 0.9rem;
+    padding: 0.6rem 1.2rem;
+  }
+
+  .response-input .custom-button {
+    padding: 0.6rem 1.2rem;
+  }
+}

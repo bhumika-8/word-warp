@@ -1,3 +1,14 @@
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .room-container {
   display: flex;
   flex-direction: column;
@@ -7,7 +18,8 @@
   width: 100vw;
   min-height: 100vh;
   box-sizing: border-box;
-  
+   animation: fadeInUp 0.8s ease-out forwards;
+  opacity: 0;
   background-size: 500px;
   background-repeat: repeat;
   color: #00F0FF;
@@ -26,6 +38,9 @@
   color: #00F0FF;
   letter-spacing: 4px;
   font-weight: 700;
+   animation: fadeInUp 0.6s ease-out forwards;
+  animation-delay: 0.2s;
+  opacity: 0;
   margin-bottom: 2rem;
   text-align: center;
   word-break: break-word;
@@ -42,6 +57,9 @@
   color: #2FFFAD;
   font-family: 'Orbitron', sans-serif;
   text-shadow: 0 0 12px #2FFFAD;
+    animation: fadeInUp 0.6s ease-out forwards;
+  animation-delay: 0.4s;
+  opacity: 0;
 }
 
 /* Start Game Button */
@@ -58,6 +76,10 @@
   cursor: pointer;
   box-shadow: 0 0 18px #00F0FF;
   transition: all 0.3s ease;
+   animation: fadeInUp 0.6s ease-out forwards;
+  animation-delay: 0.6s;
+  opacity: 0;
+
 }
 .start-button:hover {
   background-color: #00C8DD;
@@ -71,6 +93,9 @@
   font-family: 'Roboto', sans-serif;
   letter-spacing: 1px;
   text-align: center;
+   animation: fadeInUp 0.6s ease-out forwards;
+  animation-delay: 0.8s;
+  opacity: 0;
 }
 
 .identity-name {
@@ -78,4 +103,107 @@
   font-weight: 600;
   text-shadow: 0 0 8px #00F0FFaa;
   font-family: 'Orbitron', sans-serif;
+   animation: fadeInUp 0.6s ease-out forwards;
+  animation-delay: 0.8s;
+  opacity: 0;
+}
+.lobby-exit-button {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  padding: 0.8rem 2rem;
+  font-size: 1.1rem;
+  background-color: #FF4E4E;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Orbitron', sans-serif;
+  letter-spacing: 2px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 12px rgba(255, 78, 78, 0.6);
+  z-index: 999;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lobby-exit-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(255, 78, 78, 1);
+}
+@media (max-width: 768px) {
+  .lobby-exit-button {
+    padding: 0.6rem 1.5rem;
+    font-size: 1rem;
+    bottom: 1.5rem;
+    right: 1.5rem;
+  }
+}
+
+/* Mobile screens */
+@media (max-width: 480px) {
+  .lobby-exit-button {
+    padding: 0.5rem 1.2rem;
+    font-size: 0.9rem;
+    bottom: 1rem;
+    right: 1rem;
+    border-radius: 8px;
+    letter-spacing: 1px;
+  }
+}
+@media (max-width: 600px) {
+  .room-container {
+    padding: 1.5rem;
+    background-size: 300px;
+  }
+
+  .room-heading {
+    font-size: 2rem;
+    padding: 1rem 1.5rem;
+    letter-spacing: 2px;
+  }
+
+  .room-subheading {
+    font-size: 1.3rem;
+    letter-spacing: 1.5px;
+  }
+
+  .start-button {
+    font-size: 1.2rem;
+    padding: 0.8rem 2rem;
+    letter-spacing: 2px;
+  }
+
+  .identity-label {
+    font-size: 1rem;
+    margin-top: 0.8rem;
+  }
+
+  .identity-name {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .room-heading {
+    font-size: 1.6rem;
+    padding: 0.8rem 1.2rem;
+    letter-spacing: 1.5px;
+  }
+
+  .room-subheading {
+    font-size: 1.1rem;
+  }
+
+  .start-button {
+    font-size: 1rem;
+    padding: 0.7rem 1.5rem;
+  }
+
+  .identity-label {
+    font-size: 0.9rem;
+  }
+
+  .identity-name {
+    font-size: 0.9rem;
+  }
 }

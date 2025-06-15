@@ -279,12 +279,24 @@ socket.on("startNextRound", ({ room }) => {
     console.log(`🧹 Room ${roomCode} deleted after ${reason}.`);
     return;
   }
+console.log("⚠️ Disconnect handler triggered by:", socket.id);
+console.log("Current room creator:", room.creator);
+console.log("Room members before deletion:", Array.from(room.members));
 
   // 👑 Handle creator reassignment
   if (room.creator === socket.id) {
     const newCreator = Array.from(room.members)[0];
     room.creator = newCreator;
     room.judge = newCreator;
+    
+    console.log(`⚡ Emitting newCreator: ${newCreator} for room ${roomCode}`);
+io.to(roomCode).emit("newCreator", {
+  newCreator,
+  newJudge: newCreator,
+  roomCode,
+  playerNames: room.playerNames,
+});
+
     io.to(roomCode).emit("newCreator", {
       newCreator,
       newJudge: newCreator,
@@ -318,7 +330,7 @@ socket.on("startNextRound", ({ room }) => {
     playerNames: room.playerNames,
   });
 
-  io.to(roomCode).emit("playerListUpdate", Array.from(room.members));
+  //io.to(roomCode).emit("playerListUpdate", Array.from(room.members));
   broadcastOpenRooms();
   console.log(`👋 ${socket.id} left or disconnected from ${roomCode}`);
 }

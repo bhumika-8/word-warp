@@ -1,94 +1,81 @@
 // src/pages/Room.jsx
-import React, { useState, useEffect, use } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import socket from '../socket';
 import PlayerList from '../components/PlayerList';
 import './room.css';
-import './lobby.css'
-import { useNavigate } from "react-router-dom";
+import './lobby.css';
 import useDisableBackButton from './disable';
 
 function Room() {
   const navigate = useNavigate();
-useDisableBackButton();
+  useDisableBackButton();
+
   const { roomId } = useParams();
   const [players, setPlayers] = useState([]);
   const [creator, setCreator] = useState(null);
+
   const handleStartGame = () => {
-  socket.emit("startGame", { roomCode: roomId });
-};
+    socket.emit("startGame", { roomCode: roomId });
+  };
 
-useEffect(() => {
-  socket.on("gameStarted", ({ prompt, selectedUser }) => {
-    // Store this data in local storage or context/state as needed
-    localStorage.setItem("prompt", prompt);
-    localStorage.setItem("judge", selectedUser);
-    //console.log(selectedUser.username)
-    navigate("/game"); // Use react-router navigate
-  });
+  const handleExit = () => {
+    const roomCode = localStorage.getItem("roomCode");
+    const userId = socket.id;
 
-  return () => socket.off("gameStarted");
-}, [navigate]);
-// useEffect(() => {
-//   const handlePlayerListUpdate = (players) => {
-//     // Prevent empty overwrites (optional but useful)
-//     if (players.length === 0) {
-//       console.warn("🚨 Empty player list received — ignoring.");
-//       return;
-//     }
+    socket.emit("leave-room", { room: roomCode, user: userId });
+    navigate('/lobby');
 
-//     console.log("✅ Updated players from server:", players);
-//     setPlayers(players);
-//   };
+    setTimeout(() => {
+      localStorage.clear();
+    }, 500);
+  };
 
-//   socket.on("playerListUpdate", handlePlayerListUpdate);
+  // On game start
+  useEffect(() => {
+    socket.on("gameStarted", ({ prompt, selectedUser }) => {
+      localStorage.setItem("prompt", prompt);
+      localStorage.setItem("judge", selectedUser);
+      navigate("/game");
+    });
 
-//   return () => {
-//     socket.off("playerListUpdate", handlePlayerListUpdate);
-//   };
-// }, []);
-console.log("🧪 Room.jsx mounted. Attempting to join room:", roomId);
+    return () => {
+      socket.off("gameStarted");
+    };
+  }, [navigate]);
 
+  // Initial room join + updates
   useEffect(() => {
     if (!roomId) return;
 
-  // Wait for socket to be connected
-  if (socket.disconnected) {
-    socket.connect(); // If it's not already connected
-  }
+    if (socket.disconnected) {
+      socket.connect();
+    }
+
     socket.emit('joinRoom', roomId);
 
- socket.on('roomJoined', ({ roomId, existingMembers, creator, playerNames }) => {
-  console.log("📩 Received 'roomJoined' with roomId:", roomId);
-  console.log("🟢 playerNames from backend:", playerNames);
+    socket.on('roomJoined', ({ roomId, existingMembers, creator, playerNames }) => {
+      localStorage.setItem("roomCode", roomId);
+      localStorage.setItem("playerNames", JSON.stringify(playerNames));
+      localStorage.setItem("creator", creator);
 
-  localStorage.setItem("roomCode", roomId);
-  localStorage.setItem("playerNames", JSON.stringify(playerNames));
-  localStorage.setItem("creator", creator);
+      setCreator(creator);
 
-  setCreator(creator);
+      setPlayers(
+        [socket.id, ...existingMembers].map(id => ({
+          id,
+          name: playerNames[id],
+        }))
+      );
+    });
 
-  // Build the player list using playerNames
-  setPlayers(
-  [socket.id, ...existingMembers].map(id => ({
-    id,
-    name: playerNames[id],
-  }))
-);
-
-
-});
-
-
-socket.on('roomUpdate', ({ playerNames }) => {
-  // ✅ Replace players with full info using the updated playerNames
-  const newPlayers = Object.entries(playerNames).map(([id, name]) => ({
-    id,
-    name,
-  }));
-  setPlayers(newPlayers);
-});
-
+    socket.on('roomUpdate', ({ playerNames }) => {
+      const newPlayers = Object.entries(playerNames).map(([id, name]) => ({
+        id,
+        name,
+      }));
+      setPlayers(newPlayers);
+    });
 
     return () => {
       socket.off('roomJoined');
@@ -96,36 +83,44 @@ socket.on('roomUpdate', ({ playerNames }) => {
     };
   }, [roomId]);
 
-// useEffect(() => {
-//   socket.on("playerListUpdate", (updatedList) => {
-//     setPlayers(updatedList); // or whatever your state setter is
-//   });
+  // Handle creator reassignment
+  useEffect(() => {
+    socket.on("newCreator", ({ newCreator, newJudge, roomCode, playerNames }) => {
+      setCreator(newCreator);
+      localStorage.setItem("creator", newCreator);
 
-//   return () => {
-//     socket.off("playerListUpdate");
-//   };
-// }, []);
+      const updatedPlayers = Object.entries(playerNames).map(([id, name]) => ({
+        id,
+        name,
+      }));
+      setPlayers(updatedPlayers);
+    });
+
+    return () => {
+      socket.off("newCreator");
+    };
+  }, []);
 
   return (
     <div className="room-container">
       <h2 className="room-heading">Room Code: {roomId}</h2>
-  <p className="identity-label">
-  You are:{" "}
-  <span className="identity-name">
-    {players.find(p => p.id === socket.id)?.name || "Unknown"}
-  </span>
-</p>
+      <p className="identity-label">
+        You are:{" "}
+        <span className="identity-name">
+          {players.find(p => p.id === socket.id)?.name || "Unknown"}
+        </span>
+      </p>
 
       <h3 className="room-subheading">Players in Room</h3>
-      <div >
-        <PlayerList players={players} />
-      </div>
-      {socket.id === creator && (
-  <button className="start-button" onClick={handleStartGame}>
-    Start Game
-  </button>
-)}
+      <PlayerList players={players} />
 
+      {socket.id === creator && (
+        <button className="start-button" onClick={handleStartGame}>
+          Start Game
+        </button>
+      )}
+
+      <button className="lobby-exit-button" onClick={handleExit}>Exit</button>
     </div>
   );
 }

@@ -1,3 +1,9 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
 .blob-container {
   position: fixed; /* Fixed so it stays in place, no scroll */
   top: 0;
@@ -119,5 +125,51 @@
   }
   50% {
     transform: translate(20%, 15%) rotate(-200deg) scale(1.2);
+  }
+}
+@media (max-width: 768px) {
+  .shape-blob,
+  .shape-blob.one,
+  .shape-blob.two,
+  .shape-blob.three,
+  .shape-blob.four,
+  .shape-blob.five,
+  .shape-blob.six {
+    height: 180px !important;
+    width: 200px !important;
+  }
+
+  .shape-blob.one {
+    left: 5%;
+    top: 15%;
+  }
+
+  .shape-blob.two {
+    left: 45%;
+    top: 5%;
+  }
+
+  .shape-blob.three {
+    left: 30%;
+    top: 50%;
+  }
+
+  .shape-blob.four {
+    left: 60%;
+    top: 30%;
+  }
+
+  .shape-blob.five {
+    left: 20%;
+    top: 70%;
+  }
+
+  .shape-blob.six {
+    left: 70%;
+    top: 60%;
+  }
+
+  .blob-c {
+    filter: blur(30px); /* Optional: Reduce blur so blobs appear tighter */
   }
 }
