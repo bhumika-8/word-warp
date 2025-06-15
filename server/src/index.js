@@ -304,6 +304,17 @@ io.to(roomCode).emit("newCreator", {
       playerNames: room.playerNames,
     });
   }
+  // 👨‍⚖️ Judge reassignment if judge (not creator) leaves
+if (room.judge === socket.id) {
+  const remainingPlayers = Array.from(room.members.keys());
+  const newJudge = remainingPlayers[0]; // Choose first available member
+  room.judge = newJudge;
+
+  io.to(roomCode).emit("newJudge", {
+    newJudge,
+    roomCode,
+  });
+}
 
   // 🕹️ Handle mid-game state
   if (room.gameInProgress) {

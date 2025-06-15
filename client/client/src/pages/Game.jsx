@@ -172,6 +172,17 @@ useEffect(() => {
     socket.off("nextRoundReady");
   };
 }, []);
+useEffect(() => {
+  socket.on("newJudge", ({ newJudge, roomCode }) => {
+    console.log("👨‍⚖️ New judge assigned:", newJudge);
+    setJudge(newJudge);
+    localStorage.setItem("judge", newJudge); // optional
+  });
+
+  return () => {
+    socket.off("newJudge");
+  };
+}, []);
 
 return (
   <div className="game-container">
@@ -235,7 +246,7 @@ return (
           </div>
 
           <div className="winner-banner">
-            🎉 {winnerId === currentUser ? "You" : getPlayerName(winnerId) || "Unknown"} win
+            {winnerId === currentUser ? "You" : getPlayerName(winnerId) || "Unknown"} win
             {winnerId === currentUser ? "" : "s"} this round!
           </div>
 
@@ -245,7 +256,7 @@ return (
               className="custom-button"
               style={{ marginTop: "2rem" }}
             >
-              🔄 Next Round
+               Next Round
             </button>
           )}
         </>
