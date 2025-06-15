@@ -1,0 +1,123 @@
+.blob-container {
+  position: fixed; /* Fixed so it stays in place, no scroll */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #000000;
+  z-index: -1;
+}
+
+.blob-c {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  filter: blur(60px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shape-blob {
+  position: absolute;
+  background: #26C3F9;
+  height: 300px;
+  width: 400px;
+  opacity: 0.5;
+  border-radius: 40% 50% 30% 40%;
+  animation:
+    transformAnim 18s ease-in-out infinite both alternate,
+    movement_one 12s ease-in-out infinite both;
+}
+
+.shape-blob.one {
+  background: #0085FF;
+  height: 500px;
+  width: 600px;
+  left: 10%;
+  top: 20%;
+  animation: transformAnim 8s ease-in-out infinite both alternate, movement_two 20s ease-in-out infinite both;
+}
+
+.shape-blob.two {
+  background: #4EAEFF;
+  height: 500px;
+  width: 500px;
+  left: 50%;
+  top: 10%;
+  animation: transformAnim 10s ease-in-out infinite both alternate, movement_two 10s ease-in-out infinite both;
+}
+
+.shape-blob.three {
+  background: #0EAFFF;
+  height: 450px;
+  width: 450px;
+  left: 40%;
+  top: 50%;
+  animation: transformAnim 7s ease-in-out infinite both alternate, movement_two 23s ease-in-out infinite both;
+}
+
+.shape-blob.four {
+  background: #4EAEFF;
+  height: 400px;
+  width: 500px;
+  left: 65%;
+  top: 35%;
+  animation: transformAnim 17s ease-in-out infinite both alternate, movement_two 13s ease-in-out infinite both;
+}
+
+.shape-blob.five {
+  background: #0085FF;
+  height: 350px;
+  width: 450px;
+  left: 30%;
+  top: 70%;
+  animation: transformAnim 12s ease-in-out infinite both alternate, movement_two 18s ease-in-out infinite both;
+}
+
+.shape-blob.six {
+  background: #0EAFFF;
+  height: 400px;
+  width: 500px;
+  left: 70%;
+  top: 60%;
+  animation: transformAnim 5s ease-in-out infinite both alternate, movement_two 5s ease-in-out infinite both;
+}
+
+/* KEYFRAMES */
+@keyframes transformAnim {
+  0%, 100% {
+    border-radius: 33% 67% 70% 30% / 30% 40% 70% 70%;
+  }
+  20% {
+    border-radius: 37% 63% 51% 49% / 37% 35% 35% 63%;
+  }
+  40% {
+    border-radius: 36% 64% 64% 36% / 64% 48% 52% 26%;
+  }
+  60% {
+    border-radius: 37% 63% 51% 49% / 30% 30% 70% 73%;
+  }
+  80% {
+    border-radius: 40% 60% 42% 58% / 51% 51% 49% 59%;
+  }
+}
+
+@keyframes movement_one {
+  0%, 100% {
+    transform: none;
+  }
+  50% {
+    transform: translate(30%, 10%) rotateY(10deg) scale(1.1);
+  }
+}
+
+@keyframes movement_two {
+  0%, 100% {
+    transform: none;
+  }
+  50% {
+    transform: translate(20%, 15%) rotate(-200deg) scale(1.2);
+  }
+}

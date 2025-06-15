@@ -2,62 +2,80 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* Push content to top */
+  justify-content: flex-start;
   padding: 2rem;
-  width: 100vw;              /* Take full viewport width */
-  min-height: 100vh;         /* Full screen height */
-  box-sizing: border-box;    /* Ensure padding doesn’t overflow */
+  width: 100vw;
+  min-height: 100vh;
+  box-sizing: border-box;
   
-  background-color: #070F2B;
-  background-image: url("../../public/pattern.svg");
   background-size: 500px;
   background-repeat: repeat;
-
-  color: #9290C3;
+  color: #00F0FF;
   font-family: 'Roboto', sans-serif;
   font-weight: 300;
   letter-spacing: 0.5px;
 }
 
-
 /* Room Code Header */
 .room-heading {
-  font-family: 'Lora', serif;
-  font-size: 2.5rem;
-  background-color: #1B1A55;
-  padding: 1rem 2rem;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 3rem;
+  background-color: rgba(0, 240, 255, 0.1);
+  padding: 1.2rem 2.5rem;
   border-radius: 1rem;
-  color: #FFE3A9;
-  letter-spacing: 2px;
-  font-weight: 400;
-  margin-bottom: 1.5rem;
+  color: #00F0FF;
+  letter-spacing: 4px;
+  font-weight: 700;
+  margin-bottom: 2rem;
   text-align: center;
   word-break: break-word;
+  box-shadow: 0 0 25px #00F0FF;
+  text-shadow: 0 0 20px #00F0FF;
 }
 
 /* Players Header */
 .room-subheading {
-  font-size: 1.6rem;
-  font-weight: 300;
-  letter-spacing: 1px;
+  font-size: 1.8rem;
+  font-weight: 400;
+  letter-spacing: 2px;
   margin-bottom: 2rem;
-  color: #9290C3;
+  color: #2FFFAD;
+  font-family: 'Orbitron', sans-serif;
+  text-shadow: 0 0 12px #2FFFAD;
 }
 
 /* Start Game Button */
 .start-button {
-  padding: 1rem 2rem;
-  font-size: 1.5rem;
-  letter-spacing: 3px;
+  padding: 1rem 2.5rem;
+  font-size: 1.6rem;
+  letter-spacing: 4px;
   margin-bottom: 2rem;
-  background-color: #535C91;
+  background-color: #00F0FF;
+  color: #070F2B;
   border: none;
   border-radius: 12px;
-  color: white;
+  font-weight: bold;
   cursor: pointer;
+  box-shadow: 0 0 18px #00F0FF;
   transition: all 0.3s ease;
 }
 .start-button:hover {
-  background-color: #9290C3;
+  background-color: #00C8DD;
   transform: scale(1.05);
+  box-shadow: 0 0 25px #00F0FF;
+}
+.identity-label {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1.2rem;
+  margin-top: 1rem;
+  font-family: 'Roboto', sans-serif;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.identity-name {
+  color: #00F0FF;
+  font-weight: 600;
+  text-shadow: 0 0 8px #00F0FFaa;
+  font-family: 'Orbitron', sans-serif;
 }

@@ -13,7 +13,7 @@ const PlayerList = ({ players }) => {
     className="player-card-room" 
   >
 
-          <p className="player-name-room">{`Player ${idx + 1}`}</p>
+          <p className="player-name-room">{p.name}</p>
         </div>
       ))}
     </div>

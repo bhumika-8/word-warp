@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from "uuid";
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
-
+import{ uniqueNamesGenerator, adjectives, animals } from 'unique-names-generator';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -26,7 +26,17 @@ async function loadCahData() {
     console.error("⚠️ Failed to load cah-compact.json:", err.message);
   }
 }
-
+function generateUniqueName(existingNames) {
+  let name;
+  do {
+    name = uniqueNamesGenerator({
+      dictionaries: [adjectives, animals],
+      separator: ' ',
+      style: 'capital',
+    });
+  } while (Object.values(existingNames).includes(name)); // prevent duplicate names
+  return name;
+}
 function getRandomPrompt() {
   if (!cahData || !Array.isArray(cahData.black)) {
     return "No prompt available.";
@@ -102,7 +112,7 @@ socket.on("createRoom", () => {
   rooms[roomId] = {
     creator: socket.id,
     members: new Set([socket.id]),
-    playerNames: { [socket.id]: "Player 1" },
+  playerNames: { [socket.id]: generateUniqueName({}) },
     judge: null,
     responses: [],
     submitted: new Set(),
@@ -162,8 +172,7 @@ if (room.gameInProgress) {
 
   // Add the member
   room.members.add(socket.id);
-   const playerCount = Object.keys(room.playerNames).length;
-  room.playerNames[socket.id] = `Player ${playerCount + 1}`;
+  room.playerNames[socket.id] = generateUniqueName(room.playerNames);
  console.log("🎯 playerNames after creation:", rooms[roomId].playerNames);
   socket.join(roomId);
 
@@ -177,8 +186,10 @@ if (room.gameInProgress) {
 });
 
   socket.to(roomId).emit("roomUpdate", {
-    newMember: socket.id,
-  });
+  
+  playerNames: room.playerNames,  // send full player name map
+});
+
 
   broadcastOpenRooms();
   console.log(`👥 ${socket.id} joined room: ${roomId}`);
@@ -253,60 +264,7 @@ socket.on("startNextRound", ({ room }) => {
 
 
 
-  socket.on("leave-room", ({ room, user }) => {
-  const currentRoom = rooms[room];
-  if (!currentRoom) return;
-
-  currentRoom.members.delete(user);
-  socket.leave(room);
-
-  // ❌ Room is now empty
-  if (currentRoom.members.size === 0) {
-    delete rooms[room];
-    console.log(`🧹 Room ${room} deleted after ${user} left.`);
-    return;
-  }
-
-  // 👑 Creator left — reassign
-  if (currentRoom.creator === user) {
-    const newCreator = Array.from(currentRoom.members)[0];
-    currentRoom.creator = newCreator;
-    currentRoom.judge = newCreator;
-    io.to(room).emit("newCreator", { newCreator, newJudge: newCreator });
-    console.log(`👑 Creator ${user} left. New creator/judge: ${newCreator}`);
-  }
-
-  // 🧠 Game mid-progress handling
-  if (currentRoom.gameInProgress) {
-    currentRoom.responses = currentRoom.responses?.filter(r => r.user !== user) || [];
-    currentRoom.submitted?.delete?.(user);
-
-    const active = Array.from(currentRoom.members);
-    const nonJudges = active.filter(id => id !== currentRoom.judge);
-
-    if (nonJudges.length < 1) {
-      currentRoom.gameInProgress = false;
-      io.to(room).emit("notEnoughPlayers");
-      console.log(`❗Game ended in ${room} due to too few players.`);
-    } else if (currentRoom.responses.length === nonJudges.length) {
-      // Reveal if all remaining non-judges submitted
-      io.to(room).emit("reveal-answers", {
-        responses: currentRoom.responses,
-        winner: null,
-      });
-      currentRoom.gameInProgress = false;
-    }
-  }
-
-  socket.to(room).emit("roomUpdate", { memberLeft: user });
-  io.to(room).emit("playerListUpdate", Array.from(currentRoom.members));
-  broadcastOpenRooms();
-  console.log(`👋 ${user} left room ${room}`);
-});
-
-
-
-socket.on("disconnect", () => {
+ function handleLeaveOrDisconnect(socket, reason = "disconnect") {
   const roomCode = getRoomOfUser(socket.id);
   if (!roomCode) return;
 
@@ -314,13 +272,15 @@ socket.on("disconnect", () => {
   if (!room) return;
 
   room.members.delete(socket.id);
+  delete room.playerNames?.[socket.id]; // ✅ Remove the name entry
 
   if (room.members.size === 0) {
     delete rooms[roomCode];
-    console.log(`❌ Room ${roomCode} deleted after disconnect.`);
+    console.log(`🧹 Room ${roomCode} deleted after ${reason}.`);
     return;
   }
 
+  // 👑 Handle creator reassignment
   if (room.creator === socket.id) {
     const newCreator = Array.from(room.members)[0];
     room.creator = newCreator;
@@ -328,11 +288,12 @@ socket.on("disconnect", () => {
     io.to(roomCode).emit("newCreator", {
       newCreator,
       newJudge: newCreator,
+      roomCode,
+      playerNames: room.playerNames,
     });
-    console.log(`👑 Creator ${socket.id} disconnected. New creator/judge: ${newCreator}`);
   }
 
-  // 🧠 Handle mid-game disconnect
+  // 🕹️ Handle mid-game state
   if (room.gameInProgress) {
     room.responses = room.responses?.filter(r => r.user !== socket.id) || [];
     room.submitted?.delete?.(socket.id);
@@ -343,7 +304,6 @@ socket.on("disconnect", () => {
     if (nonJudges.length < 1) {
       room.gameInProgress = false;
       io.to(roomCode).emit("notEnoughPlayers");
-      console.log(`❗Game ended in ${roomCode} due to too few players.`);
     } else if (room.responses.length === nonJudges.length) {
       io.to(roomCode).emit("reveal-answers", {
         responses: room.responses,
@@ -353,9 +313,24 @@ socket.on("disconnect", () => {
     }
   }
 
-  io.to(roomCode).emit("roomUpdate", { memberLeft: socket.id });
+  // ✅ Proper room update
+  io.to(roomCode).emit("roomUpdate", {
+    playerNames: room.playerNames,
+  });
+
   io.to(roomCode).emit("playerListUpdate", Array.from(room.members));
   broadcastOpenRooms();
+  console.log(`👋 ${socket.id} left or disconnected from ${roomCode}`);
+}
+
+socket.on("disconnect", () => {
+  handleLeaveOrDisconnect(socket, "disconnect");
+});
+
+socket.on("leave-room", ({ room, user }) => {
+  if (socket.id === user) {
+    handleLeaveOrDisconnect(socket, "leave");
+  }
 });
 
 

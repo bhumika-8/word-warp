@@ -1,34 +1,50 @@
 .player-list-room {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
-  padding: 1rem;
+  gap: 2rem;
+  padding: 2rem;
+  justify-content: center;
 }
 
 .player-card-room {
-  width: 15rem;
-  height: 15rem;
-  background-color: #1B1A55;
+  width: 90vw;                          /* super wide */
+  max-width: 800px;
+  height: 6rem;
+  border: 2px solid rgba(0, 240, 255, 0.4);
   border-radius: 1rem;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.2);       /* transparent dark */
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.2),
+              0 0 40px rgba(0, 240, 255, 0.1) inset;
+  
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 500;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.7rem;
+  letter-spacing: 2px;
+  color: rgba(255, 255, 255, 0.8);       /* subtle glow text */
+  text-shadow: 0 0 10px #00F0FFAA;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
   text-align: center;
-  border: 2px solid #535C91;
-  transition: transform 0.2s ease-in-out;
 }
+
 .player-card-room.current-user-card {
-  background-color: #4caf50;
+  border-color: rgba(47, 255, 173, 0.5);
+  box-shadow: 0 0 24px rgba(47, 255, 173, 0.3),
+              0 0 36px rgba(47, 255, 173, 0.15) inset;
+  text-shadow: 0 0 12px #2FFFAD;
 }
+
 .player-card-room:hover {
-  transform: scale(1.05);
+  transform: scale(1.02);
+  box-shadow: 0 0 25px rgba(0, 240, 255, 0.4),
+              0 0 50px rgba(0, 240, 255, 0.2) inset;
 }
+
+
 .player-name-room {
-  font-size: 1.2rem;
   word-break: break-word;
-  color: #DFF2EB;
-  font-family: 'Lora', serif;
-  letter-spacing: 0.5px;
+  padding: 0 1rem;
 }

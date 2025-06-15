@@ -1,16 +1,16 @@
 // src/pages/Room.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, use } from 'react';
 import { useParams } from 'react-router-dom';
 import socket from '../socket';
 import PlayerList from '../components/PlayerList';
 import './room.css';
 import './lobby.css'
 import { useNavigate } from "react-router-dom";
-
+import useDisableBackButton from './disable';
 
 function Room() {
   const navigate = useNavigate();
-
+useDisableBackButton();
   const { roomId } = useParams();
   const [players, setPlayers] = useState([]);
   const [creator, setCreator] = useState(null);
@@ -29,28 +29,64 @@ useEffect(() => {
 
   return () => socket.off("gameStarted");
 }, [navigate]);
+// useEffect(() => {
+//   const handlePlayerListUpdate = (players) => {
+//     // Prevent empty overwrites (optional but useful)
+//     if (players.length === 0) {
+//       console.warn("🚨 Empty player list received — ignoring.");
+//       return;
+//     }
+
+//     console.log("✅ Updated players from server:", players);
+//     setPlayers(players);
+//   };
+
+//   socket.on("playerListUpdate", handlePlayerListUpdate);
+
+//   return () => {
+//     socket.off("playerListUpdate", handlePlayerListUpdate);
+//   };
+// }, []);
+console.log("🧪 Room.jsx mounted. Attempting to join room:", roomId);
 
   useEffect(() => {
+    if (!roomId) return;
+
+  // Wait for socket to be connected
+  if (socket.disconnected) {
+    socket.connect(); // If it's not already connected
+  }
     socket.emit('joinRoom', roomId);
 
-    socket.on('roomJoined', ({ roomId , existingMembers,creator ,playerNames}) => {
-       localStorage.setItem("roomCode", roomId);
-        console.log("🟢 playerNames from backend:", playerNames);
-    setPlayers([{ id: socket.id, name: "You" }, ...existingMembers.map(id => ({ id, name: `Player` }))])
- localStorage.setItem("playerNames", JSON.stringify(playerNames)); 
-      setCreator(creator);
-      localStorage.setItem("creator", creator); // from roomJoined
+ socket.on('roomJoined', ({ roomId, existingMembers, creator, playerNames }) => {
+  console.log("📩 Received 'roomJoined' with roomId:", roomId);
+  console.log("🟢 playerNames from backend:", playerNames);
 
-    });
+  localStorage.setItem("roomCode", roomId);
+  localStorage.setItem("playerNames", JSON.stringify(playerNames));
+  localStorage.setItem("creator", creator);
 
-   socket.on('roomUpdate', ({ newMember }) => {
-  setPlayers((prev) => {
-    const alreadyExists = prev.some(p => p.id === newMember);
-    if (!alreadyExists) {
-      return [...prev, { id: newMember, name: `Player` }];
-    }
-    return prev;
-  });
+  setCreator(creator);
+
+  // Build the player list using playerNames
+  setPlayers(
+  [socket.id, ...existingMembers].map(id => ({
+    id,
+    name: playerNames[id],
+  }))
+);
+
+
+});
+
+
+socket.on('roomUpdate', ({ playerNames }) => {
+  // ✅ Replace players with full info using the updated playerNames
+  const newPlayers = Object.entries(playerNames).map(([id, name]) => ({
+    id,
+    name,
+  }));
+  setPlayers(newPlayers);
 });
 
 
@@ -59,22 +95,27 @@ useEffect(() => {
       socket.off('roomUpdate');
     };
   }, [roomId]);
-useEffect(() => {
-  console.log("Updated players:", players);
-}, [players]);
-useEffect(() => {
-  socket.on("playerListUpdate", (updatedList) => {
-    setPlayers(updatedList); // or whatever your state setter is
-  });
 
-  return () => {
-    socket.off("playerListUpdate");
-  };
-}, []);
+// useEffect(() => {
+//   socket.on("playerListUpdate", (updatedList) => {
+//     setPlayers(updatedList); // or whatever your state setter is
+//   });
+
+//   return () => {
+//     socket.off("playerListUpdate");
+//   };
+// }, []);
 
   return (
     <div className="room-container">
       <h2 className="room-heading">Room Code: {roomId}</h2>
+  <p className="identity-label">
+  You are:{" "}
+  <span className="identity-name">
+    {players.find(p => p.id === socket.id)?.name || "Unknown"}
+  </span>
+</p>
+
       <h3 className="room-subheading">Players in Room</h3>
       <div >
         <PlayerList players={players} />

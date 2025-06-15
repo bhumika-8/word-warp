@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import socket from "../socket";
 import './game.css';
 import { useNavigate } from "react-router-dom";
-
+import useDisableBackButton from "./disable";
 const Game = () => {
+ 
+
   const room = localStorage.getItem("roomCode");
   const currentUser = socket.id;
   const navigate = useNavigate();
-
+ useDisableBackButton();
   const [prompt, setPrompt] = useState(localStorage.getItem("prompt") || "");
   const [judge, setJudge] = useState(localStorage.getItem("judge") || "");
   const [response, setResponse] = useState("");
@@ -17,7 +19,8 @@ const Game = () => {
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [finalReveal, setFinalReveal] = useState([]);
   const [winnerId, setWinnerId] = useState(null);
-  const creator = localStorage.getItem("creator");
+const [creator, setCreator] = useState(localStorage.getItem("creator"));
+
 
   const playerNames = JSON.parse(localStorage.getItem("playerNames") || "{}");
   const getPlayerName = (id) => playerNames[id] || id;
@@ -83,20 +86,48 @@ const Game = () => {
       socket.off("gameStarted");
     };
   }, []);
+useEffect(() => {
+  const handleNewCreator = ({ newCreator }) => {
+    console.log("👑 Received newCreator:", newCreator);
+    localStorage.setItem("creator", newCreator);
+    setCreator(newCreator); // 🔁 triggers re-render
+  };
 
-  useEffect(() => {
-    socket.on("newCreator", ({ newCreator, newJudge }) => {
-      localStorage.setItem("creator", newCreator);
-      localStorage.setItem("judge", newJudge);
-      setJudge(newJudge);
-      if (newCreator === socket.id) {
-        alert("You are now the room creator and the judge.");
-      }
-    });
-    return () => {
-      socket.off("newCreator");
-    };
-  }, []);
+  socket.on("newCreator", handleNewCreator);
+
+  return () => {
+    socket.off("newCreator", handleNewCreator);
+  };
+}, []);
+
+useEffect(() => {
+  const code = localStorage.getItem("roomCode");
+  console.log("👀 roomCode on mount:", code);
+
+  socket.on("newCreator", ({ newCreator, newJudge, roomCode }) => {
+    if (roomCode) localStorage.setItem("roomCode", roomCode);
+
+    localStorage.setItem("creator", newCreator);
+    localStorage.setItem("judge", newJudge);
+    setJudge(newJudge);
+
+    if (newCreator === socket.id) {
+      alert("You are now the room creator and the judge.");
+    }
+  });
+
+  return () => {
+    socket.off("newCreator");
+  };
+}, []);
+
+
+
+
+useEffect(() => {
+  console.log("👀 roomCode on mount:", localStorage.getItem("roomCode"));
+}, []);
+
 
   useEffect(() => {
     const storedNames = localStorage.getItem("playerNames");
@@ -115,6 +146,9 @@ const Game = () => {
   useEffect(() => {
     socket.on("notEnoughPlayers", () => {
       alert("Game ended — not enough players left.");
+      localStorage.removeItem("prompt");
+      localStorage.removeItem("judge");
+
       navigate(`/room/${localStorage.getItem("roomCode")}`);
     });
     return () => {
@@ -123,6 +157,9 @@ const Game = () => {
   }, []);
 useEffect(() => {
   socket.on("nextRoundReady", ({ nextJudge }) => {
+    localStorage.removeItem("prompt");  
+    localStorage.removeItem("judge");
+
     setJudge(nextJudge);
     localStorage.setItem("judge", nextJudge);
 
@@ -202,7 +239,7 @@ return (
             {winnerId === currentUser ? "" : "s"} this round!
           </div>
 
-          {currentUser === creator && (
+          {socket.id===creator && (
             <button
               onClick={handleNextRound}
               className="custom-button"

@@ -1,200 +1,223 @@
 /* Full screen layout */
 .game-container {
   min-height: 100vh;
-  background-color: #070F2B;
-  background-image: url("../../public/pattern.svg");
-  background-size: 200px;
-  background-repeat: repeat;
-  color: #9290C3;
-  font-family: 'Roboto', sans-serif;
-  font-weight: 300;
-  letter-spacing: 0.5px;
+  color: #B0F3F1;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 400;
+  letter-spacing: 1px;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
-  padding: 2rem;
-}
-
-/* Main glass box */
-.glass-box {
-  background: rgba(255, 255, 255, 0.07);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 2rem;
   padding: 3rem;
-  max-width: 900px;
-  width: 90%;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+  overflow-x: hidden;
+  /* background-color: #070F2B; */
 }
 
-/* Exit button on top-right */
+/* Glass box */
+.glass-box {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 2.5rem;
+  padding: 4rem;
+  max-width: 1100px;
+  width: 95%;
+  box-shadow: 0 0 30px rgba(0, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Exit button */
 .exit-button {
   position: absolute;
-  top: 1.5rem;
-  right: 2rem;
+  top: 2rem;
+  right: 2.5rem;
   background-color: #ff4b5c;
-  color: white;
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 1rem;
-  cursor: pointer;
-  font-size: 1rem;
-  letter-spacing: 1px;
-  font-weight: 400;
-  transition: background-color 0.3s ease;
-}
-
-.exit-button:hover {
-  background-color: #ff2e44;
-}
-
-/* Headings and Prompt */
-.judge-name {
-  font-size: 2rem;
-  font-weight: 400;
-  letter-spacing: 1px;
-  color: #C5C4E3;
-  margin-bottom: 1rem;
-  text-align: center;
-}
-
-.prompt-text {
-  font-size: 1.5rem;
-  color: #E0E0FF;
-  text-align: center;
-  margin-bottom: 2rem;
-}
-
-/* Input + Submit */
-.response-input {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
-}
-
-.response-input input {
-  padding: 1rem;
-  border: none;
-  border-radius: 1rem;
-  background-color: #1B1A55;
-  color: #ffffff;
-  font-size: 1.2rem;
-  letter-spacing: 1px;
-  width: 24rem;
-}
-
-.response-input input::placeholder {
-  color: #aaa;
-  font-style: italic;
-}
-
-.response-input .custom-button {
-  background-color: #535C91;
   color: white;
   padding: 1rem 2rem;
   border: none;
-  border-radius: 1rem;
-  font-size: 1.1rem;
-  letter-spacing: 1px;
+  border-radius: 1.5rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-shadow: 0 0 4px #000;
+  transition: all 0.3s ease;
+}
+.exit-button:hover {
+  background-color: #ff2e44;
+  transform: scale(1.08);
+}
+
+/* Headings + Prompt */
+.judge-name {
+  font-size: 2.8rem;
+  font-family: 'Orbitron', sans-serif;
+  font-weight: 600;
+  color: #00F0FF;
+  text-shadow: 0 0 12px #00F0FF;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+.prompt-text {
+  font-size: 2.2rem;
+  color: #E0E0FF;
+  text-align: center;
+  margin-bottom: 2.5rem;
+  font-family: 'Orbitron', sans-serif;
+  letter-spacing: 1.5px;
+}
+
+/* Input & Button */
+.response-input {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+}
+.response-input input {
+  padding: 1.5rem;
+  border: none;
+  border-radius: 1.5rem;
+  background-color: rgba(27, 26, 85, 0.6);
+  color: #ffffff;
+  font-size: 1.4rem;
+  letter-spacing: 1.2px;
+  width: 28rem;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 0 12px #535C91;
+}
+.response-input input::placeholder {
+  color: #bbb;
+  font-style: italic;
+}
+.response-input .custom-button {
+  background-color: #00F0FF;
+  color: #070F2B;
+  padding: 1.2rem 2.5rem;
+  border: none;
+  border-radius: 1.5rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 1.2px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  box-shadow: 0 0 12px #00F0FF;
+  transition: all 0.3s ease;
 }
-
 .response-input .custom-button:hover {
-  background-color: #9290C3;
+  background-color: #0ff;
+  transform: scale(1.08);
 }
 
-/* Judge Response Buttons */
+/* Judge responses */
 .response-options {
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
-  margin-top: 1.5rem;
+  gap: 1.5rem;
+  margin-top: 2rem;
 }
-
 .custom-button {
-  background-color: #1B1A55;
+  background: rgba(27, 26, 85, 0.6);
   color: #C5C4E3;
-  padding: 1.2rem;
+  padding: 1.4rem;
   border: 2px solid #535C91;
-  border-radius: 1rem;
-  font-size: 1.2rem;
-  letter-spacing: 0.7px;
+  border-radius: 1.25rem;
+  font-size: 1.3rem;
   cursor: pointer;
   transition: all 0.3s ease;
+  box-shadow: 0 0 12px #535C91;
 }
-
 .custom-button:hover {
   background-color: #2B2A65;
-  border-color: #9290C3;
+  border-color: #00F0FF;
+  color: #E0FFFF;
 }
 
-/* Highlight selected */
-.bg-green-100 {
-  background-color: #283618 !important;
-  color: #d2fba4 !important;
+/* Response items */
+.response-item {
+  font-size: 1.5rem;
+  color: #DFF2EB;
+  background-color: rgba(27, 26, 85, 0.5);
+  padding: 1.4rem;
+  margin: 1rem 0;
+  border-radius: 1rem;
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.25);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.2s ease-in-out;
+  backdrop-filter: blur(8px);
+}
+.response-item:hover {
+  transform: scale(1.05);
 }
 
-.border-green-500 {
-  border-color: #80FF95 !important;
+/* Winner highlight */
+.winner-response {
+  background-color: rgba(46, 125, 50, 0.7);
+  color: #d2fba4;
+  font-weight: 700;
+  border: 2px solid #80FF95;
+  box-shadow: 0 0 12px #80FF95;
+}
+.normal-response {
+  background-color: rgba(27, 26, 85, 0.5);
+}
+
+/* Player names */
+.player-name {
+  font-weight: 600;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.4rem;
+  color: #A0C3D9;
+  margin-left: 1rem;
+}
+
+/* Identity line */
+.identity-label {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.4rem;
+  margin-top: 1.5rem;
+  font-family: 'Orbitron', sans-serif;
+  letter-spacing: 1.2px;
+  text-align: center;
+}
+.identity-name {
+  color: #00F0FF;
+  font-weight: 700;
+  text-shadow: 0 0 10px #00F0FFaa;
+  font-family: 'Orbitron', sans-serif;
 }
 
 /* Winner banner */
 .winner-banner {
   text-align: center;
   color: #80FF95;
-  font-size: 1.5rem;
-  font-weight: 400;
-  letter-spacing: 1px;
-  margin-top: 2rem;
+  font-size: 1.8rem;
+  font-weight: 600;
+  letter-spacing: 1.4px;
+  margin-top: 2.5rem;
+  text-shadow: 0 0 10px #80FF95;
 }
 
-/* Final reveal list */
+/* Reveal list */
 ul.list-disc {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   color: #eee;
   margin-bottom: 2rem;
+  padding-left: 2rem;
 }
-
 ul.list-disc li {
-  margin-bottom: 0.8rem;
-}
-.response-item {
-  font-size: 1.3rem;
-  color: #DFF2EB;
-  background-color: #1B1A55;
-  padding: 1rem;
-  margin: 0.75rem 0;
-  border-radius: 0.75rem;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  letter-spacing: 0.5px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: transform 0.2s ease-in-out;
+  margin-bottom: 1rem;
+  line-height: 1.5;
 }
 
-.response-item:hover {
-  transform: scale(1.03);
+/* Optional flicker animation for accent text */
+@keyframes flicker {
+  0%   { opacity: 1; }
+  50%  { opacity: 0.4; }
+  100% { opacity: 1; }
 }
-
-.winner-response {
-  background-color: #2e7d32; /* dark green */
-  color: #d2fba4;
-  font-weight: 600;
-  border: 2px solid #80FF95;
-}
-
-.normal-response {
-  background-color: #1B1A55;
-}
-
-.player-name {
-  font-weight: 500;
-  font-family: 'Lora', serif;
-  font-size: 1.1rem;
-  color: #A0C3D9;
-  margin-left: 1rem;
+.flicker {
+  animation: flicker 1.8s infinite;
 }

@@ -5,6 +5,7 @@ import Lobby from "./pages/Lobby";
 import Room from "./pages/Room";
 import Game from "./pages/Game";
 import socket from "./socket";
+import BlobbyBackground from './components/BlobbyBackground';
 function App() {
   console.log("Lobby:", Lobby); // Should log a function, not an object
 console.log("Room:", Room);   // Same here
@@ -24,7 +25,8 @@ useEffect(() => {
 }, []);
 
   return (
-    
+      <div className="relative w-full h-screen overflow-hidden bg-black">
+      <BlobbyBackground />
     <Router>
       <Routes>
         <Route path="/" element={<Lobby />} />
@@ -33,6 +35,7 @@ useEffect(() => {
 
       </Routes>
     </Router>
+    </div>
   );
 }
 

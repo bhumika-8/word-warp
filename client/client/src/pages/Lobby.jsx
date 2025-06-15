@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import socket from "../socket";
 import './lobby.css';
-
+import useDisableBackButton from "./disable";
 const Lobby = () => {
+ 
+
   const [roomCode, setRoomCode] = useState("");
   const [openRooms, setOpenRooms] = useState([]);
   const navigate = useNavigate();
-
+ useDisableBackButton();
   const handleCreateRoom = () => {
     //console.log("Creating room...");
     socket.emit("createRoom");
@@ -88,7 +90,7 @@ useEffect(() => {
         {openRooms.length === 0 ? (
           <p>No open rooms right now.</p>
         ) : (
-          <ul>
+          <ul >
             {openRooms.map((room) => (
               <li key={room.code} className="room-card">
                 <div>
@@ -99,8 +101,8 @@ useEffect(() => {
                   className="join-room-btn"
                  onClick={() => {
                   
-  console.log("Joining directly:", room.code);
-  socket.emit("joinRoom", room.code);
+            console.log("Joining directly:", room.code);
+            socket.emit("joinRoom", room.code);
 }}
 
                   disabled={room.members >= 6}
