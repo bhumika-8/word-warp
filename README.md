@@ -44,9 +44,9 @@ cd word-warp
 
 ### BACKEND SETUP
 ```bash
-cd backend
+cd server
 npm install
-cd server/src
+cd src
 nodemon index.js
 ```
 Runs at http://localhost:5000
@@ -63,7 +63,7 @@ Runs at http://localhost:3000
 
 ```bash
 word-warp/
-├── client/
+├── client/client/
 │   ├── public/
 │   └── src/
 │       ├── components/         # UI components (navbar, modal, etc.)
