@@ -30,7 +30,7 @@
 ## Live Demo
 
 - Frontend: [https://word-warp-ten.vercel.app](https://word-warp-ten.vercel.app)
-- Backend: [https://word-warp-server.onrender.com](https://word-warp-server.onrender.com)
+- Backend: https://word-warp.onrender.com
 
 ---
 ## Local Development
