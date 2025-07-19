@@ -183,6 +183,44 @@ useEffect(() => {
     socket.off("newJudge");
   };
 }, []);
+useEffect(() => {
+  socket.on("notEnoughPlayersRedirect", ({ message, roomCode, playerNames }) => {
+    alert(message || "Not enough players to continue. Returning to waiting room.");
+
+    // 🧹 Clean round-specific state
+    localStorage.removeItem("prompt");
+    localStorage.removeItem("judge");
+
+    // 💾 Restore room/player state
+    if (roomCode) localStorage.setItem("roomCode", roomCode);
+    if (playerNames) localStorage.setItem("playerNames", JSON.stringify(playerNames));
+
+    // ✅ Navigate
+    navigate(`/room/${roomCode}`);
+  });
+
+  return () => socket.off("notEnoughPlayersRedirect");
+}, []);
+
+useEffect(() => {
+  socket.on("roundResetDueToJudgeLeave", ({ newJudge, message }) => {
+    alert(message);
+    setJudge(newJudge);
+    localStorage.setItem("judge", newJudge);
+    setPrompt("");
+    setHasSubmitted(false);
+    setAllResponses([]);
+    setFinalReveal([]);
+    setSelectedIndex(null);
+    setWinnerId(null);
+  });
+
+  return () => socket.off("roundResetDueToJudgeLeave");
+}, []);
+useEffect(() => {
+  const storedCreator = localStorage.getItem("creator");
+  if (storedCreator !== creator) setCreator(storedCreator);
+}, [creator]);
 
 return (
   <div className="game-container">

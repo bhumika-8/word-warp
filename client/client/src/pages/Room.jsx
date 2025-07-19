@@ -16,6 +16,10 @@ function Room() {
   const [creator, setCreator] = useState(null);
 
   const handleStartGame = () => {
+      if (players.length < 3) {
+    alert("At least 3 players are required to start the game.");
+    return;
+  }
     socket.emit("startGame", { roomCode: roomId });
   };
 
@@ -120,7 +124,7 @@ function Room() {
         </button>
       )}
 
-      <button className="lobby-exit-button" onClick={handleExit}>Exit</button>
+      <button  className="lobby-exit-button" onClick={handleExit}>Exit</button>
     </div>
   );
 }
